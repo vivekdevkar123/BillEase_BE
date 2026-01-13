@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from decimal import Decimal
 
 from bill.models import Bill, Product
 from bill.serializers import BillSerializer, BillListSerializer, ProductSerializer
@@ -148,9 +149,11 @@ def create_bill(request):
                 try:
                     product = Product.objects.get(name=product_name, user=user, is_active=True)
                     # Always update stock (defaults to 0 if None)
-                    current_stock = product.stock_quantity if product.stock_quantity is not None else 0
-                    # Reduce stock, normalize to 0 if negative
-                    product.stock_quantity = max(0, current_stock - quantity)
+                    current_stock = product.stock_quantity if product.stock_quantity is not None else Decimal('0')
+                    # Reduce stock by exact quantity (supports decimals like 1.5, 2.75, etc.)
+                    quantity_decimal = Decimal(str(quantity))
+                    new_stock = current_stock - quantity_decimal
+                    product.stock_quantity = max(Decimal('0'), new_stock)
                     product.save()
                 except Product.DoesNotExist:
                     pass  # Product not found, skip stock update

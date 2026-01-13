@@ -6,7 +6,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'description', 'price', 'category', 
+            'id', 'name', 'description', 'price', 
             'stock_quantity', 'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -80,7 +80,7 @@ class BillSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f"Item {idx + 1} has invalid price")
             
             try:
-                quantity = int(item['quantity'])
+                quantity = float(item['quantity'])
                 if quantity <= 0:
                     raise serializers.ValidationError(f"Item {idx + 1} quantity must be greater than zero")
             except (ValueError, TypeError):

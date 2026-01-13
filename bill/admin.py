@@ -5,8 +5,8 @@ from bill.models import Bill, Product
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'price', 'stock_quantity', 'category', 'is_active', 'user', 'created_at']
-    list_filter = ['is_active', 'category', 'user', 'created_at']
+    list_display = ['id', 'name', 'price', 'stock_quantity', 'is_active', 'user', 'created_at']
+    list_filter = ['is_active', 'user', 'created_at']
     search_fields = ['name', 'description', 'user__email']
     readonly_fields = ['id', 'created_at', 'updated_at']
     
@@ -14,8 +14,8 @@ class ProductAdmin(admin.ModelAdmin):
         ('Product Information', {
             'fields': ('id', 'user', 'name', 'description', 'price')
         }),
-        ('Inventory & Categorization', {
-            'fields': ('stock_quantity', 'category')
+        ('Inventory', {
+            'fields': ('stock_quantity',)
         }),
         ('Status', {
             'fields': ('is_active',)

@@ -11,8 +11,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.CharField(max_length=100, blank=True, null=True)
-    stock_quantity = models.IntegerField(blank=True, null=True, help_text='Available stock quantity')
+    stock_quantity = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text='Available stock quantity')
     is_active = models.BooleanField(default=True)
     
     # Timestamps
