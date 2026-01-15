@@ -31,11 +31,12 @@ class PlanAdmin(admin.ModelAdmin):
 
 class UserModelAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
-    list_display = ('email', 'first_name', 'last_name', 'mobile_number', 'current_plan', 'is_account_activated', 'plan_expiry_date', 'is_active')
+    list_display = ('email', 'first_name', 'last_name', 'mobile_number', 'referred_by', 'current_plan', 'is_account_activated', 'plan_expiry_date', 'is_active')
     list_filter = ('is_admin', 'is_active', 'is_account_activated', 'current_plan')
     fieldsets = (
         ('User Credentials', {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'mobile_number')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'mobile_number', 'referred_by')}),
+        ('Business Details', {'fields': ('business_name', 'business_address')}),
         ('GST Information', {'fields': ('gstin_number', 'gst_percentage')}),
         ('Plan Information', {'fields': ('current_plan', 'plan_expiry_date', 'billing_requests_remaining')}),
         ('Permissions', {'fields': ('is_admin', 'is_active', 'is_account_activated')}),

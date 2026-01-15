@@ -63,7 +63,7 @@ class Plan(models.Model):
 
 # Custom User Manager
 class UserManager(BaseUserManager):
-    def create_user(self, email, first_name, last_name, mobile_number, password=None):
+    def create_user(self, email, first_name, last_name, mobile_number, password=None, **extra_fields):
         """
         Creates and saves a User with the given email, name, mobile number and password.
         """
@@ -75,6 +75,7 @@ class UserManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             mobile_number=mobile_number,
+            **extra_fields
         )
 
         user.set_password(password)
@@ -105,6 +106,13 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     mobile_number = models.CharField(max_length=13)
+    
+    # Business details
+    business_name = models.CharField(max_length=200, blank=True, null=True, help_text='Business/Company Name')
+    business_address = models.TextField(blank=True, null=True, help_text='Business Address')
+    
+    # Referral field
+    referred_by = models.CharField(max_length=200, blank=True, null=True, help_text='Name of person who referred this user')
     
     # GST-related fields
     gstin_number = models.CharField(max_length=15, blank=True, null=True, help_text='GST Identification Number')
