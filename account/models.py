@@ -10,15 +10,8 @@ class Plan(models.Model):
     """
     Plan model to store different subscription plans
     """
-    PLAN_TYPES = (
-        ('trial', 'Trial Plan'),
-        ('1month', '1 Month Plan'),
-        ('3months', '3 Months Plan'),
-        ('6months', '6 Months Plan'),
-        ('12months', '12 Months Plan'),
-    )
     
-    plan_key = models.CharField(max_length=50, unique=True, choices=PLAN_TYPES, help_text='Unique plan identifier')
+    plan_key = models.CharField(max_length=50, unique=True, help_text='Unique plan identifier')
     name = models.CharField(max_length=100, help_text='Plan display name')
     description = models.TextField(blank=True, null=True, help_text='Plan description')
     price = models.DecimalField(max_digits=10, decimal_places=2, help_text='Plan price')
@@ -42,6 +35,7 @@ class Plan(models.Model):
     
     # Status
     is_active = models.BooleanField(default=True, help_text='Plan is active and available')
+    is_custom = models.BooleanField(default=False, help_text='Custom plan - not shown in public plan list')
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)

@@ -144,10 +144,10 @@ class UserPasswordResetView(APIView):
 
 class GetPlansView(APIView):
   """
-  GET: List all active plans for user selection
+  GET: List all active plans for user selection (excludes custom plans)
   """
   renderer_classes = [UserRenderer]
   def get(self, request, format=None):
-    plans = Plan.objects.filter(is_active=True).order_by('price')
+    plans = Plan.objects.filter(is_active=True, is_custom=False).order_by('price')
     serializer = PlanSerializer(plans, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

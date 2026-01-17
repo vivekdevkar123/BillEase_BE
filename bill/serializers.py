@@ -131,6 +131,10 @@ class BillSerializer(serializers.ModelSerializer):
         if 'status' in validated_data:
             instance.status = validated_data['status']
         
+        # Update is_paid if provided
+        if 'is_paid' in validated_data:
+            instance.is_paid = validated_data['is_paid']
+        
         # If items are provided, recalculate all amounts
         if 'items' in validated_data:
             items_data = validated_data['items']
@@ -163,7 +167,7 @@ class BillListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'customer_name', 'customer_phone', 
             'subtotal', 'cgst_amount', 'sgst_amount', 'total', 
-            'items_count', 'status', 'created_at', 'updated_at'
+            'items_count', 'status', 'is_paid', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'subtotal', 'cgst_amount', 'sgst_amount', 'total', 'items_count', 'created_at', 'updated_at']
     

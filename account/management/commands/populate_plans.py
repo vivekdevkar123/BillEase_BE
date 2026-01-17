@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 'has_multi_device': True,
                 'has_cloud_backup': True,
                 'has_24x7_support': True,
-                'has_inventory_management': False,
+                'has_inventory_management': True,
                 'has_insights_dashboard': False,
                 'has_sales_reports': False,
                 'has_inventory_reports': False,
@@ -81,7 +81,7 @@ class Command(BaseCommand):
                 'has_insights_dashboard': False,
                 'has_sales_reports': False,
                 'has_inventory_reports': False,
-                'has_excel_export': False,
+                'has_excel_export': True,
             },
             {
                 'plan_key': '12months',
