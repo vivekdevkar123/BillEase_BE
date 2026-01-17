@@ -6,7 +6,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'description', 'price', 
+            'id', 'name', 'price', 'manage_inventory',
             'stock_quantity', 'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -24,17 +24,23 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Stock quantity cannot be negative")
         return value
     
+    def validate(self, data):
+        # If manage_inventory is False, set stock_quantity to 0
+        if not data.get('manage_inventory', False):
+            data['stock_quantity'] = 0
+        return data
+    
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['user'] = user
-        # Ensure stock_quantity defaults to 0
-        if 'stock_quantity' not in validated_data or validated_data['stock_quantity'] is None:
+        # If not managing inventory, ensure stock_quantity is 0
+        if not validated_data.get('manage_inventory', False):
             validated_data['stock_quantity'] = 0
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
-        # Ensure stock_quantity defaults to 0 if not provided
-        if 'stock_quantity' not in validated_data or validated_data['stock_quantity'] is None:
+        # If not managing inventory, ensure stock_quantity is 0
+        if not validated_data.get('manage_inventory', False):
             validated_data['stock_quantity'] = 0
         return super().update(instance, validated_data)
 
@@ -46,7 +52,7 @@ class BillSerializer(serializers.ModelSerializer):
         model = Bill
         fields = [
             'id', 'customer_name', 'customer_phone', 'items', 'items_count',
-            'subtotal', 'cgst_amount', 'sgst_amount', 'total', 'status', 
+            'subtotal', 'cgst_amount', 'sgst_amount', 'total', 'status', 'is_paid',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'items_count', 'subtotal', 'cgst_amount', 'sgst_amount', 'total', 'created_at', 'updated_at']

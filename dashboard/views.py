@@ -83,17 +83,20 @@ def dashboard_overview(request):
     # Total products
     total_products = Product.objects.filter(user=user, is_active=True).count()
     
-    # Low stock products (stock < 10)
+    # Low stock products (stock < 10) - only for products with inventory management enabled
     low_stock_count = Product.objects.filter(
         user=user,
         is_active=True,
-        stock_quantity__lt=10
+        manage_inventory=True,
+        stock_quantity__lt=10,
+        stock_quantity__gt=0
     ).count()
     
-    # Out of stock products
+    # Out of stock products - only for products with inventory management enabled
     out_of_stock_count = Product.objects.filter(
         user=user,
         is_active=True,
+        manage_inventory=True,
         stock_quantity__lte=0
     ).count()
     
@@ -242,18 +245,20 @@ def product_insights(request):
             'upgrade_required': True
         }, status=status.HTTP_403_FORBIDDEN)
     
-    # Low stock products (stock < 10)
+    # Low stock products (stock < 10) - only for products with inventory management enabled
     low_stock_products = Product.objects.filter(
         user=user,
         is_active=True,
+        manage_inventory=True,
         stock_quantity__lt=10,
         stock_quantity__gt=0
     ).values('id', 'name', 'stock_quantity', 'price').order_by('stock_quantity')[:10]
     
-    # Out of stock products
+    # Out of stock products - only for products with inventory management enabled
     out_of_stock_products = Product.objects.filter(
         user=user,
         is_active=True,
+        manage_inventory=True,
         stock_quantity__lte=0
     ).values('id', 'name', 'price')[:10]
     
@@ -519,21 +524,21 @@ def inventory_report(request):
             'upgrade_required': True
         }, status=status.HTTP_403_FORBIDDEN)
     
-    # Get all products
-    products = Product.objects.filter(user=user, is_active=True)
+    # Get all products with inventory management enabled
+    products = Product.objects.filter(user=user, is_active=True, manage_inventory=True)
     
     total_products = products.count()
     out_of_stock = products.filter(stock_quantity__lte=0).count()
     low_stock = products.filter(stock_quantity__gt=0, stock_quantity__lt=10).count()
     in_stock = products.filter(stock_quantity__gte=10).count()
     
-    # Total inventory value
+    # Total inventory value - only for products with inventory management
     total_value = sum([
         float(product.price) * float(product.stock_quantity or 0)
         for product in products
     ])
     
-    # Products needing attention
+    # Products needing attention - only for products with inventory management
     critical_products = products.filter(stock_quantity__lte=0).values(
         'id', 'name', 'price', 'stock_quantity'
     )
@@ -543,7 +548,7 @@ def inventory_report(request):
         stock_quantity__lt=10
     ).values('id', 'name', 'price', 'stock_quantity')
     
-    # All products list
+    # All products list - only products with inventory management
     all_products = products.values('id', 'name', 'price', 'stock_quantity').order_by('name')
     
     return Response({

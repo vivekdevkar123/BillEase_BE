@@ -91,7 +91,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'email', 'first_name', 'last_name', 'mobile_number',
-            'business_name', 'business_address', 'referred_by',
+            'business_name', 'business_address', 'upi_id', 'referred_by',
             'gstin_number', 'gst_percentage',
             'current_plan', 'plan_key', 'plan_expiry_date', 'billing_requests_remaining',
             'is_account_activated', 'is_plan_active', 'can_make_billing_request',

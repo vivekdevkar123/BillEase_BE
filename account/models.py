@@ -110,6 +110,7 @@ class User(AbstractBaseUser):
     # Business details
     business_name = models.CharField(max_length=200, blank=True, null=True, help_text='Business/Company Name')
     business_address = models.TextField(blank=True, null=True, help_text='Business Address')
+    upi_id = models.CharField(max_length=100, blank=True, null=True, help_text='UPI ID for digital payments')
     
     # Referral field
     referred_by = models.CharField(max_length=200, blank=True, null=True, help_text='Name of person who referred this user')

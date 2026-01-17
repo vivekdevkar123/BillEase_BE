@@ -83,10 +83,13 @@ def delete_product(request, product_id):
     """
     DELETE: Soft delete product (mark as inactive)
     """
-    product = get_object_or_404(Product, id=product_id, user=request.user)
-    product.is_active = False
-    product.save()
-    return Response({'message': 'Product deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    try:
+        product = get_object_or_404(Product, id=product_id, user=request.user)
+        product.is_active = False
+        product.save()
+        return Response({'message': 'Product deleted successfully'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # --- Bill Management Views ---

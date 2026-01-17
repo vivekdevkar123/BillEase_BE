@@ -9,9 +9,9 @@ class Product(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products')
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock_quantity = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text='Available stock quantity')
+    manage_inventory = models.BooleanField(default=False, help_text='Whether to track inventory for this product')
+    stock_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text='Available stock quantity')
     is_active = models.BooleanField(default=True)
     
     # Timestamps
@@ -51,6 +51,7 @@ class Bill(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text='Total amount including GST')
     
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='completed', help_text='Bill status: pending or completed')
+    is_paid = models.BooleanField(default=True, help_text='Payment status: True if paid, False if unpaid')
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
