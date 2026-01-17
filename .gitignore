@@ -66,9 +66,9 @@ staticfiles/
 static/
 
 # Django migrations
-# Keep migrations in version control
-# **/migrations/*
-# !**/migrations/__init__.py
+# Ignore all migration files except __init__.py
+**/migrations/*.py
+!**/migrations/__init__.py
 
 # Flask stuff:
 instance/
@@ -216,3 +216,6 @@ marimo/_lsp/
 __marimo__/
 
 db.sqlite3
+
+# Ignore all log files
+*.log
