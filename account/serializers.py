@@ -3,7 +3,9 @@ from account.models import User, Plan
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from account.utils import Util
 
 class PlanSerializer(serializers.ModelSerializer):
     """Serializer for Plan model"""
@@ -123,6 +125,80 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
     class Meta:
         fields = ['email']
+    
+    def validate(self, attrs):        
+        email = attrs.get('email')
+        # Check if user exists
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            
+            # Generate password reset token
+            uid = urlsafe_base64_encode(force_bytes(user.id))
+            token = PasswordResetTokenGenerator().make_token(user)
+            
+            # Create deep link that opens the mobile app
+            reset_link = f'billeazzy://reset-password/{uid}/{token}'
+            
+            # HTML email with clickable button
+            html_body = f'''
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ text-align: center; padding: 20px 0; }}
+                    .content {{ background: #f9f9f9; padding: 30px; border-radius: 10px; }}
+                    .button {{ 
+                        display: inline-block;
+                        padding: 15px 30px;
+                        background: #7c3aed;
+                        color: white !important;
+                        text-decoration: none;
+                        border-radius: 8px;
+                        font-weight: bold;
+                        margin: 20px 0;
+                    }}
+                    .footer {{ text-align: center; margin-top: 30px; color: #666; font-size: 14px; }}
+                    .warning {{ color: #666; font-size: 14px; margin-top: 20px; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1 style="color: #7c3aed;">🔐 BillEazzy</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>{user.first_name}</strong>,</p>
+                        <p>You requested to reset your password for your BillEazzy account.</p>
+                        <p>Tap the button below to reset your password:</p>
+                        <div style="text-align: center;">
+                            <a href="{reset_link}" class="button">Reset Password</a>
+                        </div>
+                        <p class="warning">
+                            ⏰ This link will expire in <strong>15 minutes</strong>.
+                        </p>
+                        <p class="warning">
+                            If you didn't request this, please ignore this email.
+                        </p>
+                    </div>
+                    <div class="footer">
+                        <p>Thanks,<br><strong>BillEazzy Team</strong></p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            '''
+            
+            data = {
+                'subject': 'Reset Your Password - BillEazzy',
+                'html_body': html_body,
+                'to_email': user.email
+            }
+            Util.send_email(data)
+        
+        # Always return success to prevent email enumeration attacks
+        return attrs
 
 
 class UserPasswordResetSerializer(serializers.Serializer):

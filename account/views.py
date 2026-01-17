@@ -51,10 +51,58 @@ class SendOTPView(APIView):
             request.session['otp_email'] = email
             request.session['otp_expires_at'] = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
 
-            body = f'Your OTP Code code is {otp}\n\nOtp is valid for 10 min only'
+            # HTML email for OTP
+            html_body = f'''
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ text-align: center; padding: 20px 0; }}
+                    .content {{ background: #f9f9f9; padding: 30px; border-radius: 10px; }}
+                    .otp-box {{
+                        background: #7c3aed;
+                        color: white;
+                        font-size: 32px;
+                        font-weight: bold;
+                        padding: 20px;
+                        text-align: center;
+                        border-radius: 8px;
+                        margin: 20px 0;
+                        letter-spacing: 8px;
+                    }}
+                    .footer {{ text-align: center; margin-top: 30px; color: #666; font-size: 14px; }}
+                    .warning {{ color: #666; font-size: 14px; margin-top: 20px; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1 style="color: #7c3aed;">📧 BillEazzy</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hello,</p>
+                        <p>Your verification code for BillEazzy account is:</p>
+                        <div class="otp-box">{otp}</div>
+                        <p class="warning">
+                            ⏰ This OTP is valid for <strong>10 minutes</strong> only.
+                        </p>
+                        <p class="warning">
+                            If you didn't request this code, please ignore this email.
+                        </p>
+                    </div>
+                    <div class="footer">
+                        <p>Thanks,<br><strong>BillEazzy Team</strong></p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            '''
+            
             data = {
-              'subject':'Verify your account',
-              'body':body,
+              'subject':'Verify Your Account - BillEazzy',
+              'html_body':html_body,
               'to_email':email
             }
             Util.send_email(data)
