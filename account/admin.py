@@ -5,8 +5,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 # Register your models here.
 
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ('name', 'plan_key', 'price', 'duration_days', 'billing_requests', 'is_unlimited', 'is_active')
-    list_filter = ('is_active', 'has_unlimited_bills', 'has_inventory_management')
+    list_display = ('name', 'plan_key', 'price', 'duration_days', 'billing_requests', 'is_unlimited', 'is_custom', 'is_active')
+    list_filter = ('is_active', 'is_custom', 'has_unlimited_bills', 'has_inventory_management')
     search_fields = ('name', 'plan_key', 'description')
     readonly_fields = ('created_at', 'updated_at')
     
@@ -24,7 +24,7 @@ class PlanAdmin(admin.ModelAdmin):
             'fields': ('has_insights_dashboard', 'has_sales_reports', 'has_inventory_reports', 'has_excel_export')
         }),
         ('Status', {
-            'fields': ('is_active', 'created_at', 'updated_at')
+            'fields': ('is_active', 'is_custom', 'created_at', 'updated_at')
         }),
     )
 
